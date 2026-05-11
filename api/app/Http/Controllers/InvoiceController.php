@@ -14,13 +14,22 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $invoice = Invoice::create([
-            'client_name' => $request->client_name,
-            'amount' => $request->amount,
-            'is_paid' => false,
+        $validated = $request->validate([
+            'client_name' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0',
+            'status' => 'nullable|string',
+            'issue_date' => 'nullable|date',
+            'due_date' => 'nullable|date',
+            'notes' => 'nullable|string',
         ]);
 
-        return response()->json($invoice);
+        $invoice = Invoice::create([
+            ...$validated,
+            'invoice_number' => 'INV-' . now()->format('Y') . '-' . str_pad(Invoice::count() + 1, 4, '0', STR_PAD_LEFT),
+            'status' => $validated['status'] ?? 'draft',
+        ]);
+
+        return response()->json($invoice, 201);
     }
 
     public function update(Request $request, Invoice $invoice)
@@ -28,7 +37,10 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'client_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'is_paid' => 'boolean',
+            'status' => 'nullable|string',
+            'issue_date' => 'nullable|date',
+            'due_date' => 'nullable|date',
+            'notes' => 'nullable|string',
         ]);
 
         $invoice->update($validated);
