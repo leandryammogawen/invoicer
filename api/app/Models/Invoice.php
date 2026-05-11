@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Invoice extends Model
 {
     protected $fillable = [
+        'client_id',
         'invoice_number',
         'client_name',
         'amount',
@@ -16,4 +17,9 @@ class Invoice extends Model
         'due_date',
         'notes',
     ];
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
 }

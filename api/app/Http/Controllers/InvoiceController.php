@@ -9,12 +9,13 @@ class InvoiceController extends Controller
 {
     public function index()
     {
-        return Invoice::all();
+        return Invoice::with('client')->latest()->get();
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'client_id' => 'nullable|exists:clients,id',
             'client_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'status' => 'nullable|string',
@@ -35,6 +36,7 @@ class InvoiceController extends Controller
     public function update(Request $request, Invoice $invoice)
     {
         $validated = $request->validate([
+            'client_id' => 'nullable|exists:clients,id',
             'client_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'status' => 'nullable|string',
