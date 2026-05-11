@@ -16,7 +16,6 @@ class InvoiceController extends Controller
     {
         $validated = $request->validate([
             'client_id' => 'nullable|exists:clients,id',
-            'client_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'status' => 'nullable|string',
             'issue_date' => 'nullable|date',
@@ -37,7 +36,6 @@ class InvoiceController extends Controller
     {
         $validated = $request->validate([
             'client_id' => 'nullable|exists:clients,id',
-            'client_name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'status' => 'nullable|string',
             'issue_date' => 'nullable|date',
