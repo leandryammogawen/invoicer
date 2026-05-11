@@ -15,7 +15,7 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id' => 'nullable|exists:clients,id',
+            'client_id' => 'required|exists:clients,id',
             'amount' => 'required|numeric|min:0',
             'status' => 'nullable|string',
             'issue_date' => 'nullable|date',
