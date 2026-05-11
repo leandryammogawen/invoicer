@@ -88,3 +88,49 @@ Next Phase:
 - Advanced invoice data structure
 - Invoice statuses
 - Client relationships
+
+### Phase 2 — Invoice Data Model Upgrade
+
+Expanded invoice structure to support more realistic invoice data.
+
+Added:
+- Invoice number
+- Status
+- Issue date
+- Due date
+- Notes
+
+Updated:
+- Laravel migration
+- Invoice model fillable fields
+- Store and update validation
+- Next.js invoice type
+- Invoice creation form
+- Invoice display
+
+### Phase 3 — Client Management Foundation
+
+Added a dedicated clients table and connected invoices to clients.
+
+Implemented:
+- Client model and migration
+- Client API endpoints
+- Invoice-client relationship
+- Laravel Eloquent relationships
+- Client dropdown in invoice form
+
+This phase improves the database design by separating client data from invoice records.
+
+### Phase 3 Refactor — Client Relationship Source of Truth
+
+Removed the old client_name field from invoices.
+
+Invoices now reference clients through client_id only.
+
+Updated:
+- Invoice database schema
+- Invoice model fillable fields
+- Invoice validation
+- Frontend invoice type
+- Invoice creation payload
+- Invoice display logic
