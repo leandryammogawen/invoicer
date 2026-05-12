@@ -145,3 +145,14 @@ Updated:
 - Used client relationship as invoice source of truth
 - Simplified frontend display to invoice.client.name
 - Removed nullable client submission logic
+
+### Phase 4 UI Enhancements
+
+Implemented dynamic invoice item management.
+
+Added:
+- Remove item functionality
+- Live line total calculations
+- Dynamic grand total calculation
+- Frontend business rule enforcement
+- Immutable state update patterns
