@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -27,6 +28,7 @@ class InvoiceController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
 
+        $invoice = DB::transaction(function () use ($validated) {
         $totalAmount = collect($validated['items'])->sum(function ($item) {
             return $item['quantity'] * $item['unit_price'];
         });
@@ -49,6 +51,9 @@ class InvoiceController extends Controller
                 'total' => $item['quantity'] * $item['unit_price'],
             ]);
         }
+
+        return $invoice;
+    });
 
         return response()->json($invoice->load(['client', 'items']), 201);
     }
