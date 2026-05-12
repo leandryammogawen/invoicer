@@ -10,12 +10,12 @@ class InvoiceItem extends Model
         'invoice_id',
         'description',
         'quantity',
-        'unite_price',
+        'unit_price',
         'total',
     ];
 
     public function invoice()
     {
-        return $this->belongsto(Invoice::class);
+        return $this->belongsTo(Invoice::class);
     }
 }

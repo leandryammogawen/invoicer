@@ -16,20 +16,41 @@ class InvoiceController extends Controller
     {
         $validated = $request->validate([
             'client_id' => 'required|exists:clients,id',
-            'amount' => 'required|numeric|min:0',
             'status' => 'nullable|string',
             'issue_date' => 'nullable|date',
             'due_date' => 'nullable|date',
             'notes' => 'nullable|string',
+
+            'items' => 'required|array|min:1',
+            'items.*.description' => 'required|string|max:255',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.unit_price' => 'required|numeric|min:0',
         ]);
+
+        $totalAmount = collect($validated['items'])->sum(function ($item) {
+            return $item['quantity'] * $item['unit_price'];
+        });
 
         $invoice = Invoice::create([
-            ...$validated,
+            'client_id' => $validated['client_id'],
             'invoice_number' => 'INV-' . now()->format('Y') . '-' . str_pad(Invoice::count() + 1, 4, '0', STR_PAD_LEFT),
+            'amount' => $totalAmount,
             'status' => $validated['status'] ?? 'draft',
+            'issue_date' => $validated['issue_date'] ?? null,
+            'due_date' => $validated['due_date'] ?? null,
+            'notes' => $validated['notes'] ?? null,
         ]);
 
-        return response()->json($invoice, 201);
+        foreach ($validated['items'] as $item) {
+            $invoice->items()->create([
+                'description' => $item['description'],
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['unit_price'],
+                'total' => $item['quantity'] * $item['unit_price'],
+            ]);
+        }
+
+        return response()->json($invoice->load(['client', 'items']), 201);
     }
 
     public function update(Request $request, Invoice $invoice)
