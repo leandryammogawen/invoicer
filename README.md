@@ -134,3 +134,14 @@ Updated:
 - Frontend invoice type
 - Invoice creation payload
 - Invoice display logic
+
+### Phase 3 Stabilization — Required Client Relationship
+
+Finalized invoice-client relationship rules.
+
+Updated:
+- Removed client_name dependency
+- Added required client_id to invoices
+- Used client relationship as invoice source of truth
+- Simplified frontend display to invoice.client.name
+- Removed nullable client submission logic

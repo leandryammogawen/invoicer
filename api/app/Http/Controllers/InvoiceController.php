@@ -9,7 +9,7 @@ class InvoiceController extends Controller
 {
     public function index()
     {
-        return Invoice::with('client')->latest()->get();
+        return Invoice::with('client', 'items')->latest()->get();
     }
 
     public function store(Request $request)
