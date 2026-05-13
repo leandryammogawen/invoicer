@@ -171,3 +171,15 @@ Implemented:
 
 The application UI was refactored from basic inline styling toward a scalable component-oriented layout structure.
 
+### Phase 6 — Shared Dashboard Layout
+
+Added a persistent app layout using Next.js App Router.
+
+Implemented:
+- Shared sidebar navigation
+- Header layout
+- Dashboard route
+- Invoices route
+- Clients route
+
+This prepares the app for modular page-based CRUD features.
