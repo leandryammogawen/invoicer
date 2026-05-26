@@ -200,15 +200,15 @@ Implemented:
 
 This phase introduced complete frontend/backend CRUD synchronization between React state and Laravel APIs.
 
-### Phase 8 — Invoice Edit and Delete
+### Phase 8 — Invoice Update Workflow
 
 Implemented:
+- Invoice edit mode
+- Dynamic invoice item editing
+- Conditional create/update invoice submission
 - Invoice deletion
 - Cascade deletion handling for invoice items
-- Invoice edit mode
-- Prefilled invoice form state
-- Dynamic invoice item editing
-- Conditional create/update invoice flow
-- Local React state synchronization for invoice updates
+- Invoice form reset logic
+- Relational CRUD synchronization between invoices and invoice items
 
-This phase introduced relational CRUD operations between invoices and invoice items.
+Invoice updates now recreate invoice items from submitted form state to simplify nested relational updates.
