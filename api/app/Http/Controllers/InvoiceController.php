@@ -109,4 +109,11 @@ class InvoiceController extends Controller
             'message' => 'Invoice deleted successfully'
         ]);
     }
+
+    public function show(Invoice $invoice)
+    {
+        return response()->json(
+            $invoice->load(['client', 'items'])
+        );
+    }
 }
