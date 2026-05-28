@@ -228,3 +228,13 @@ Implemented:
 - Component-based invoice rendering
 
 This phase transitioned the invoice page from a single large file into a modular component architecture.
+
+### Phase 10 — Invoice Details Page
+
+Implemented:
+- Dynamic invoice detail route
+- Single invoice API fetch
+- Invoice client details
+- Invoice item breakdown
+- Status, dates, notes, and total display
+- View navigation from invoice cards
