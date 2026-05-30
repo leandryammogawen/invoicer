@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Invoice::with('client', 'items')->latest()->get();
+        return $request->user()
+            ->invoices()
+            ->with(['client', 'items'])
+            ->get();
     }
 
     public function store(Request $request)
@@ -28,12 +31,12 @@ class InvoiceController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
 
-        $invoice = DB::transaction(function () use ($validated) {
+        $invoice = DB::transaction(function () use ($validated, $request) {
             $totalAmount = collect($validated['items'])->sum(function ($item) {
                 return $item['quantity'] * $item['unit_price'];
             });
 
-            $invoice = Invoice::create([
+            $invoice = $request->user()->invoices()->create([
                 'client_id' => $validated['client_id'],
                 'invoice_number' => 'INV-' . now()->format('Y') . '-' . str_pad(Invoice::count() + 1, 4, '0', STR_PAD_LEFT),
                 'amount' => $totalAmount,
@@ -60,6 +63,8 @@ class InvoiceController extends Controller
 
     public function update(Request $request, Invoice $invoice)
     {
+        abort_if($invoice->user_id !== request()->user()->id, 403);
+
         $validated = $request->validate([
             'client_id' => 'required|exists:clients,id',
             'status' => 'required|string',
@@ -103,6 +108,8 @@ class InvoiceController extends Controller
 
     public function destroy(Invoice $invoice)
     {
+        abort_if($invoice->user_id !== request()->user()->id, 403);
+
         $invoice->delete();
 
         return response()->json([
@@ -112,6 +119,8 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
+        abort_if($invoice->user_id !== request()->user()->id, 403);
+
         return response()->json(
             $invoice->load(['client', 'items'])
         );

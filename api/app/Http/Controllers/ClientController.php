@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Client::latest()->get();
+        return response()->json([
+        'user' => $request->user(),
+    ]);
     }
 
     public function store(Request $request)
@@ -21,13 +23,15 @@ class ClientController extends Controller
             'address' => 'nullable|string',
         ]);
 
-        $client = Client::create($validated);
+        $client = $request->user()->clients()->create($validated);
 
         return response()->json($client, 201);
     }
 
     public function update(Request $request, Client $client)
     {
+        abort_if($client->user_id !== $request->user()->id, 403);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
@@ -40,8 +44,10 @@ class ClientController extends Controller
         return response()->json($client);
     }
 
-    public function destroy(Client $client)
+    public function destroy(Request $request, Client $client)
     {
+        abort_if($client->user_id !== $request()->user()->id, 403);
+
         $client->delete();
 
         return response()->json([

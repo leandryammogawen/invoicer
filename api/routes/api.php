@@ -4,16 +4,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\AuthController;
 
-Route::get('/invoices', [InvoiceController::class, 'index']);
-Route::post('/invoices', [InvoiceController::class, 'store']);
-Route::put('/invoices/{invoice}', [InvoiceController::class, 'update']);
-Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy']);
-Route::get('/invoices/{invoice}', [InvoiceController::class, 'show']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
 
-Route::get('/clients', [ClientController::class, 'index']);
-Route::post('/clients', [ClientController::class, 'store']);
-Route::put('/clients/{client}', [ClientController::class, 'update']);
-Route::delete('/clients/{client}', [ClientController::class, 'destroy']);
-
+    Route::apiResource('invoices', InvoiceController::class);
+    Route::apiResource('clients', ClientController::class);
+});
