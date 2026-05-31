@@ -226,15 +226,34 @@ Implemented:
 - Reusable invoice UI architecture
 - Cleaner page-level state management
 - Component-based invoice rendering
-
-This phase transitioned the invoice page from a single large file into a modular component architecture.
-
-### Phase 10 — Invoice Details Page
-
-Implemented:
 - Dynamic invoice detail route
 - Single invoice API fetch
 - Invoice client details
 - Invoice item breakdown
 - Status, dates, notes, and total display
 - View navigation from invoice cards
+
+This phase transitioned the invoice page from a single large file into a modular component architecture.
+
+### Phase 10 — Authentication & Resource Ownership
+
+Implemented:
+- Laravel Sanctum authentication
+- User registration endpoint
+- User login endpoint
+- Logout endpoint
+- Authenticated user endpoint
+- Personal access token generation
+- Protected API routes with auth:sanctum
+- User-to-client relationship
+- User-to-invoice relationship
+- user_id foreign keys for clients and invoices
+- User-scoped invoice queries
+- User-scoped client queries
+- Ownership checks for invoice access
+- Ownership checks for client access
+- Frontend token storage (localStorage)
+- Authorization Bearer token headers
+- Protected invoice CRUD requests
+- Protected client CRUD requests
+- Error handling with try/catch
