@@ -9,9 +9,7 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json([
-        'user' => $request->user(),
-    ]);
+        return $request->user()->clients;
     }
 
     public function store(Request $request)
@@ -46,7 +44,7 @@ class ClientController extends Controller
 
     public function destroy(Request $request, Client $client)
     {
-        abort_if($client->user_id !== $request()->user()->id, 403);
+        abort_if($client->user_id !== $request->user()->id, 403);
 
         $client->delete();
 

@@ -257,3 +257,16 @@ Implemented:
 - Protected invoice CRUD requests
 - Protected client CRUD requests
 - Error handling with try/catch
+
+### Phase 11 — Route Groups & Layout Separation
+
+Implemented:
+- Next.js route groups
+- (auth) route group
+- (dashboard) route group
+- Dashboard-specific layout
+- Sidebar restricted to dashboard pages
+- Login page separated from dashboard layout
+- Protected page redirects for unauthenticated users
+- Authentication checks using localStorage token
+- Shared dashboard layout architecture
