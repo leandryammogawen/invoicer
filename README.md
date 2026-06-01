@@ -270,3 +270,30 @@ Implemented:
 - Protected page redirects for unauthenticated users
 - Authentication checks using localStorage token
 - Shared dashboard layout architecture
+
+### Phase 12 — Centralized API Helper
+
+Implemented:
+- Created reusable apiFetch helper
+- Centralized API base URL
+- Centralized Authorization header injection
+- Centralized Accept and Content-Type headers
+- Removed repeated fetch configuration across pages
+- Refactored clients page API calls
+- Refactored invoices page API calls
+- Refactored invoice details page API calls
+- Refactored login page API calls
+- Added automatic error handling for failed requests
+- Surfaced Laravel validation messages to frontend
+
+### Phase 13 — Authentication UX & Route Protection
+
+Implemented:
+- Login page redirects authenticated users
+- Register page redirects authenticated users
+- Logout functionality
+- Token removal on logout
+- Dashboard route protection
+- Redirect unauthenticated users to login
+- Prevent access to auth pages while logged in
+- Protected frontend navigation flow
