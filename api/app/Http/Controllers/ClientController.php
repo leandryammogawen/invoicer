@@ -46,6 +46,12 @@ class ClientController extends Controller
     {
         abort_if($client->user_id !== $request->user()->id, 403);
 
+        if ($client->invoices()->exists()) {
+            return response()->json([
+                'message' => 'Cannot delete a client with existing invoices.',
+            ], 409);
+        }
+
         $client->delete();
 
         return response()->json([
