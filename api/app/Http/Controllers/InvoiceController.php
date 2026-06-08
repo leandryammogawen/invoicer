@@ -18,18 +18,34 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
-            'status' => 'nullable|string',
-            'issue_date' => 'nullable|date',
-            'due_date' => 'nullable|date',
-            'notes' => 'nullable|string',
+        $validated = $request->validate(
+            [
+                'client_id' => 'required|exists:clients,id',
+                'status' => 'nullable|string',
+                'issue_date' => 'nullable|date',
+                'due_date' => 'nullable|date',
+                'notes' => 'nullable|string',
 
-            'items' => 'required|array|min:1',
-            'items.*.description' => 'required|string|max:255',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.unit_price' => 'required|numeric|min:0',
-        ]);
+                'items' => 'required|array|min:1',
+                'items.*.description' => 'required|string|max:255',
+                'items.*.quantity' => 'required|integer|min:1',
+                'items.*.unit_price' => 'required|numeric|min:0',
+            ],
+            [
+                'client_id.required' => 'Please select a client.',
+                'client_id.exists' => 'The selected client is invalid.',
+            ],
+            [
+                'client_id' => 'client',
+                'issue_date' => 'issue date',
+                'due_date' => 'due date',
+                'items' => 'invoice items',
+                'items.*.description' => 'description',
+                'items.*.quantity' => 'quantity',
+                'items.*.unit_price' => 'unit price',
+            ]
+
+        );
 
         $invoice = DB::transaction(function () use ($validated, $request) {
             $totalAmount = collect($validated['items'])->sum(function ($item) {
