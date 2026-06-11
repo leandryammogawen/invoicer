@@ -27,6 +27,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/apache2.conf \
     /etc/apache2/conf-available/*.conf
 
-CMD sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf && \
+CMD php artisan migrate --force && \
+    sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf && \
     sed -i "s/:80/:${PORT}/" /etc/apache2/sites-available/000-default.conf && \
     apache2-foreground
