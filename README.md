@@ -1,6 +1,6 @@
 # Invoicer
 
-A full-stack invoicing system built with Next.js, Laravel, and MySQL.
+A full-stack invoicing system built with Next.js, Laravel, and PostgreSQL.
 
 ## Tech Stack
 
@@ -12,8 +12,11 @@ Frontend:
 
 Backend:
 - Laravel
+- Laravel Sanctum
 - REST API
-- MySQL
+
+Database:
+- PostgreSQL
 
 ## Architecture
 
@@ -25,41 +28,54 @@ invoicer/
 
 Frontend and backend communicate through REST APIs using JSON.
 
-## Features Completed
+## Deployment
 
-### Phase 1 — Core CRUD
+Frontend:
+- Vercel
 
-Implemented:
-- Create invoices
-- Read invoices
-- Update invoices
-- Delete invoices
+Backend:
+- Render
 
-Additional Features:
-- React state management
-- API integration using fetch
-- TypeScript typing
-- Laravel API routing
-- MySQL database integration
+Database:
+- PostgreSQL
+
+## Live Demo
+
+Frontend:
+https://invoicer-ivory.vercel.app
+
+Backend:
+https://invoicer-92jx.onrender.com
 
 ## Current Features
 
-- Invoice listing
-- Invoice creation form
-- Invoice editing
-- Invoice deletion
-- Paid/unpaid status display
-
-## Features Planned
-
-- Invoice status system
-- Invoice items
+- User authentication
+- Protected dashboard routes
 - Client management
-- PDF invoice generation
-- Authentication
+- Invoice management
+- Invoice item management
+- User-scoped data ownership
+- Dashboard navigation
+- Production deployment
+
+## Roadmap
+
+Planned:
 - Dashboard analytics
-- Email invoices
-- Deployment
+- PDF invoice generation
+- Email invoice delivery
+- Invoice status workflows
+- Improved mobile experience
+- User profile management
+
+## Key Learnings
+
+- Designing RESTful APIs with Laravel
+- Building protected frontend routes in Next.js
+- Implementing token-based authentication with Sanctum
+- Managing relational data between invoices and clients
+- Deploying a full-stack application using Vercel and Render
+- Debugging production deployment issues
 
 ## Setup Instructions
 
@@ -81,13 +97,37 @@ npm run dev
 
 ## Current Project Status
 
-Phase 1 Completed:
-- Full CRUD functionality completed
+Production MVP Deployed
 
-Next Phase:
-- Advanced invoice data structure
-- Invoice statuses
-- Client relationships
+Completed:
+- Authentication
+- Client Management
+- Invoice Management
+- User Ownership & Authorization
+- Dashboard Navigation
+- Production Deployment
+
+Currently Working On:
+- Dashboard UI improvements
+- Client experience improvements
+- Invoice workflow refinements
+
+## Development History
+
+### Phase 1 — Core CRUD
+
+Implemented:
+- Create invoices
+- Read invoices
+- Update invoices
+- Delete invoices
+
+Additional Features:
+- React state management
+- API integration using fetch
+- TypeScript typing
+- Laravel API routing
+- Relational database integration
 
 ### Phase 2 — Invoice Data Model Upgrade
 
@@ -297,3 +337,29 @@ Implemented:
 - Redirect unauthenticated users to login
 - Prevent access to auth pages while logged in
 - Protected frontend navigation flow
+
+### Phase 14 — Production Deployment
+
+Implemented:
+- Vercel frontend deployment
+- Render backend deployment
+- Production environment variables
+- PostgreSQL production database
+- Frontend/backend integration in production
+- Authentication testing in production
+- End-to-end user workflow testing
+- Production bug fixing
+- Route and deployment troubleshooting
+
+### Phase 15 — Dashboard Navigation & User Experience
+
+Implemented:
+- Persistent sidebar navigation
+- Active route highlighting
+- Lucide icon integration
+- Authenticated user display
+- User initials avatar
+- Account popover menu
+- Logout menu action
+- Responsive dashboard shell architecture
+- Shared dashboard navigation experience
