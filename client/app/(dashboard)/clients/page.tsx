@@ -187,7 +187,7 @@ export default function ClientsPage() {
   }, [toast.message]);
 
   return (
-    <main className="space-y-8">
+    <main className="mx-auto max-w-7xl p-6 space-y-8">
       <section>
         <h1 className="text-2xl font-bold text-gray-900">Clients</h1>
         <p className="text-gray-500">
@@ -199,8 +199,10 @@ export default function ClientsPage() {
             {error}
           </div>
         )}
+      </section>
 
-        <div className="my-6 flex items-center justify-between gap-4">
+      <section>
+        <div className="flex items-center justify-between gap-4">
           <div className="relative w-full max-w-md">
             <Search
               size={16}
@@ -221,7 +223,9 @@ export default function ClientsPage() {
             Add Client
           </button>
         </div>
+      </section>
 
+      <section>
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <table className="w-full">
             <thead className="bg-slate-50">
