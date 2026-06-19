@@ -91,7 +91,7 @@ export default function DashboardLayout({
 
   return (
     <div className="flex min-h-screen ">
-      <aside className="sticky top-0 flex h-screen w-64 flex-col border-r border-gray-200 bg-white">
+      <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-gray-200 bg-white">
         <div className="p-6">
           <h1 className="text-xl font-bold text-blue-900">Invoicer</h1>
         </div>
@@ -99,7 +99,7 @@ export default function DashboardLayout({
         <nav className="flex-1 px-3">
           <Link
             href="/dashboard"
-            className={`flex items-center gap-2 rounded-lg px-3 py-3 text-md font-medium text-slate-600 transition-colors ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition-colors ${
               pathname === "/dashboard"
                 ? "bg-slate-100 text-slate-900"
                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -111,7 +111,7 @@ export default function DashboardLayout({
 
           <Link
             href="/invoices"
-            className={`flex items-center gap-2 rounded-lg px-3 py-3 text-md font-medium text-slate-600 transition-colors ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition-colors ${
               pathname === "/invoices"
                 ? "bg-slate-100 text-slate-900"
                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -123,7 +123,7 @@ export default function DashboardLayout({
 
           <Link
             href="/clients"
-            className={`flex items-center gap-2 rounded-lg px-3 py-3 text-md font-medium text-slate-600 transition-colors ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition-colors ${
               pathname === "/clients"
                 ? "bg-slate-100 text-slate-900"
                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -195,7 +195,7 @@ export default function DashboardLayout({
       </aside>
 
       <div className="flex-1">
-        <main className="p-8">{children}</main>
+        <main className="mx-auto max-w-7xl p-8">{children}</main>
       </div>
     </div>
   );
