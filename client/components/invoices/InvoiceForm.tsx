@@ -46,74 +46,148 @@ export default function InvoiceForm({
   onSubmit,
   formErrors,
 }: InvoiceFormProps) {
+  const grandTotal = items.reduce(
+    (total, item) => total + item.quantity * item.unit_price,
+    0,
+  );
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
-    >
-      {formErrors.clientId && (
-        <p className="mt-1 text-sm text-red-600">{formErrors.clientId}</p>
-      )}
-      <select
-        value={clientId}
-        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-        onChange={(e) => setClientId(e.target.value)}
-      >
-        <option value="" disabled>
-          Select client
-        </option>
+    <form onSubmit={onSubmit} className="space-y-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-slate-900">
+            Invoice Details
+          </h2>
 
-        {clients.map((client) => (
-          <option key={client.id} value={client.id}>
-            {client.name}
-          </option>
-        ))}
-      </select>
+          <p className="mt-1 text-sm text-slate-500">
+            Configure the client and invoice information.
+          </p>
+        </div>
 
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-      >
-        <option value="draft">Draft</option>
-        <option value="sent">Sent</option>
-        <option value="paid">Paid</option>
-        <option value="overdue">Overdue</option>
-      </select>
+        {formErrors.clientId && (
+          <p className="mb-4 text-sm text-red-600">{formErrors.clientId}</p>
+        )}
 
-      <input
-        type="date"
-        value={issueDate}
-        onChange={(e) => setIssueDate(e.target.value)}
-        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-      />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Client</label>
 
-      <input
-        type="date"
-        value={dueDate}
-        onChange={(e) => setDueDate(e.target.value)}
-        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-      />
+            <select
+              value={clientId}
+              onChange={(e) => setClientId(e.target.value)}
+              className="w-full rounded-xl bg-slate-50 px-4 py-2 text-sm outline-none ring-1 ring-slate-100 focus:bg-white focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="" disabled>
+                Select client
+              </option>
 
-      <textarea
-        placeholder="Notes"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-      />
+              {clients.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {client.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {formErrors.items && (
-        <p className="mt-2 text-sm text-red-600">{formErrors.items}</p>
-      )}
-      
-      <InvoiceItemFields items={items} setItems={setItems} />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Status</label>
 
-      <button
-        type="submit"
-        className="rounded-md bg-blue-900 px-4 py-2 text-white hover:bg-blue-800"
-      >
-        {editingInvoiceId ? "Update Invoice" : "Create Invoice"}
-      </button>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full rounded-xl bg-slate-50 px-4 py-2 text-sm outline-none ring-1 ring-slate-100 focus:bg-white focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="paid">Paid</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">
+              Issue Date
+            </label>
+
+            <input
+              type="date"
+              value={issueDate}
+              onChange={(e) => setIssueDate(e.target.value)}
+              className="w-full rounded-xl bg-slate-50 px-4 py-2 text-sm outline-none ring-1 ring-slate-100 focus:bg-white focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">
+              Due Date
+            </label>
+
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              className="w-full rounded-xl bg-slate-50 px-4 py-2 text-sm outline-none ring-1 ring-slate-100 focus:bg-white focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-slate-900">Notes</h2>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Optional notes that will appear on the invoice.
+          </p>
+        </div>
+
+        <textarea
+          placeholder="Add notes..."
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className="w-full rounded-xl bg-slate-50 px-4 py-3 text-sm outline-none ring-1 ring-slate-100 focus:bg-white focus:ring-2 focus:ring-blue-500"
+          rows={4}
+        />
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-slate-900">
+            Invoice Items
+          </h2>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Add products or services to this invoice.
+          </p>
+        </div>
+
+        {formErrors.items && (
+          <p className="mb-4 text-sm text-red-600">{formErrors.items}</p>
+        )}
+
+        <InvoiceItemFields items={items} setItems={setItems} />
+
+        <div className="mt-6 border-t border-slate-200 pt-6">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-slate-500">Total Amount</span>
+
+            <span className="text-xl font-semibold text-slate-900">
+              ₱{grandTotal.toLocaleString()}
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end">
+          <button
+            type="submit"
+            className="rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100"
+          >
+            {editingInvoiceId ? "Update Invoice" : "Create Invoice"}
+          </button>
+        </div>
+      </section>
     </form>
   );
 }

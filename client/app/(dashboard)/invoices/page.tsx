@@ -2,51 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { apiFetch } from "@/lib/api";
+import type { Invoice, ToastState } from "@/types/invoice";
 
-import InvoiceCard from "@/components/invoices/InvoiceCard";
-import InvoiceForm from "@/components/invoices/InvoiceForm";
 import Toast from "@/components/ui/Toast";
-
-import type { Client, Invoice, InvoiceItem, ToastState } from "@/types/invoice";
+import StatusBadge from "@/components/invoices/StatusBadge";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+
+import { Eye, Search, Pencil, Trash2 } from "lucide-react";
 
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [items, setItems] = useState<InvoiceItem[]>([
-    {
-      description: "",
-      quantity: 1,
-      unit_price: 0,
-    },
-  ]);
-  const [status, setStatus] = useState("draft");
-  const [issueDate, setIssueDate] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [notes, setNotes] = useState("");
-  const [clients, setClients] = useState<Client[]>([]);
-  const [clientId, setClientId] = useState("");
-  const [editingInvoiceId, setEditingInvoiceId] = useState<number | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const [pageError, setPageError] = useState("");
-  const [formErrors, setFormErrors] = useState({
-    clientId: "",
-    items: "",
-  });
-
+  const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
   const router = useRouter();
-
   const [toast, setToast] = useState<ToastState>({
     message: "",
     type: "success",
   });
-
   const [invoiceToDelete, setInvoiceToDelete] = useState<number | null>(null);
-
   const filteredInvoices = invoices.filter((invoice) => {
     const searchValue = searchTerm.toLowerCase();
 
@@ -68,126 +45,10 @@ export default function InvoicesPage() {
 
       setInvoices(data);
     } catch (error) {
-      setPageError("Something went wrong while loading invoices.");
+      setError("Something went wrong while loading invoices.");
     } finally {
       setLoading(false);
     }
-  }
-
-  async function fetchClients() {
-    try {
-      if (!token) return;
-
-      setLoading(true);
-
-      const response = await apiFetch("/api/clients");
-
-      const data = await response.json();
-
-      setClients(data);
-    } catch (error) {
-      setPageError("Something went wrong while loading invoices.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const handleSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-
-    const url = editingInvoiceId
-      ? `/api/invoices/${editingInvoiceId}`
-      : "/api/invoices";
-
-    const method = editingInvoiceId ? "PUT" : "POST";
-
-    const errors = {
-      clientId: "",
-      items: "",
-    };
-
-    if (!clientId) {
-      errors.clientId = "Please select a client.";
-    }
-
-    if (
-      items.some(
-        (item) => !item.description || item.quantity < 1 || item.unit_price < 0,
-      )
-    ) {
-      errors.items = "Please complete all invoice items.";
-    }
-
-    if (errors.clientId || errors.items) {
-      setFormErrors(errors);
-      return;
-    }
-
-    setFormErrors(errors);
-
-    try {
-      const res = await apiFetch(url, {
-        method,
-        body: JSON.stringify({
-          client_id: clientId ? Number(clientId) : null,
-          status,
-          issue_date: issueDate || null,
-          due_date: dueDate || null,
-          notes: notes || null,
-          items,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (editingInvoiceId) {
-        setInvoices((prev) =>
-          prev.map((invoice) =>
-            invoice.id === editingInvoiceId ? data : invoice,
-          ),
-        );
-      } else {
-        setInvoices((prev) => [data, ...prev]);
-      }
-
-      resetInvoiceForm();
-
-      setFormErrors({
-        clientId: "",
-        items: "",
-      });
-
-      setToast({
-        message: editingInvoiceId ? "Invoice updated." : "Invoice created.",
-        type: "success",
-      });
-    } catch (error) {
-      setToast({
-        message: "Something went wrong while saving the invoice.",
-        type: "error",
-      });
-    }
-  };
-
-  function handleEditInvoice(invoice: Invoice) {
-    setEditingInvoiceId(invoice.id);
-
-    setClientId(String(invoice.client_id));
-    setStatus(invoice.status);
-    setIssueDate(invoice.issue_date ?? "");
-    setDueDate(invoice.due_date ?? "");
-    setNotes(invoice.notes ?? "");
-
-    setItems(
-      invoice.items.map((item) => ({
-        id: item.id,
-        invoice_id: item.invoice_id,
-        description: item.description,
-        quantity: Number(item.quantity),
-        unit_price: Number(item.unit_price),
-        total: Number(item.total),
-      })),
-    );
   }
 
   function handleDeleteInvoice(id: number) {
@@ -220,24 +81,6 @@ export default function InvoicesPage() {
     }
   }
 
-  function resetInvoiceForm() {
-    setEditingInvoiceId(null);
-
-    setClientId("");
-    setStatus("draft");
-    setIssueDate("");
-    setDueDate("");
-    setNotes("");
-
-    setItems([
-      {
-        description: "",
-        quantity: 1,
-        unit_price: 0,
-      },
-    ]);
-  }
-
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
 
@@ -254,7 +97,6 @@ export default function InvoicesPage() {
     if (token) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchInvoices();
-      fetchClients();
     }
   }, [token]);
 
@@ -272,68 +114,174 @@ export default function InvoicesPage() {
   }, [toast]);
 
   return (
-    <main className="mx-auto max-w-5xl p-6">
-      <Toast message={toast.message} type={toast.type} />
+    <main className="mx-auto max-w-6xl p-6 space-y-8">
+      <section>
+        <h1 className="text-2xl font-bold text-gray-900">Invoices</h1>
 
-      <section className="mb-10">
-        <h1 className="mb-6 text-2xl font-bold">Create Invoice</h1>
+        <p className="text-gray-500">
+          Track invoices, payment status, and client billing.
+        </p>
 
-        <InvoiceForm
-          clients={clients}
-          clientId={clientId}
-          setClientId={setClientId}
-          status={status}
-          setStatus={setStatus}
-          issueDate={issueDate}
-          setIssueDate={setIssueDate}
-          dueDate={dueDate}
-          setDueDate={setDueDate}
-          notes={notes}
-          setNotes={setNotes}
-          items={items}
-          setItems={setItems}
-          editingInvoiceId={editingInvoiceId}
-          onSubmit={handleSubmit}
-          formErrors={formErrors}
+        {error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 mt-4 p-4 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+      </section>
+
+      <section>
+        <div className="my-6 flex items-center justify-between gap-4">
+          <div className="relative w-full max-w-md">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+
+            <input
+              type="text"
+              className="w-full rounded-xl bg-slate-50 py-2 pl-10 pr-4 text-sm placeholder:text-slate-400 outline-none ring-1 ring-slate-100 transition focus:bg-white focus:ring-2 focus:ring-blue-500"
+              placeholder="Search by invoice number or client name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <button
+            onClick={() => router.push("/invoices/create")}
+            className="whitespace-nowrap rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100"
+          >
+            Create Invoice
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="whitespace-nowrap px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Invoice #
+                </th>
+
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Client
+                </th>
+
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Status
+                </th>
+
+                <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Total
+                </th>
+
+                <th className="whitespace-nowrap px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Issue Date
+                </th>
+
+                <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-6 py-12 text-center text-slate-500"
+                  >
+                    Loading invoices...
+                  </td>
+                </tr>
+              ) : filteredInvoices.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-6 py-12 text-center text-slate-500"
+                  >
+                    No invoices found.
+                  </td>
+                </tr>
+              ) : (
+                filteredInvoices.map((invoice) => (
+                  <tr key={invoice.id}>
+                    <td className="px-6 py-4 text-sm font-medium text-slate-900">
+                      {invoice.invoice_number}
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {invoice.client.name}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <StatusBadge status={invoice.status} />
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      ₱{Number(invoice.amount).toLocaleString()}
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {invoice.issue_date
+                        ? new Date(invoice.issue_date).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            },
+                          )
+                        : "-"}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => router.push(`/invoices/${invoice.id}`)}
+                          className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                        >
+                          <Eye size={14} />
+                          View
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            router.push(`/invoices/${invoice.id}/edit`)
+                          }
+                          className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+                        >
+                          <Pencil size={14} />
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteInvoice(invoice.id)}
+                          className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
+                        >
+                          <Trash2 size={14} />
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <Toast message={toast.message} type={toast.type} />
+
+        <ConfirmModal
+          open={invoiceToDelete !== null}
+          title="Delete invoice?"
+          message="This action cannot be undone."
+          onCancel={() => setInvoiceToDelete(null)}
+          onConfirm={confirmDeleteInvoice}
         />
       </section>
-
-      <h1 className="mb-6 text-2xl font-bold">Invoices</h1>
-
-      <input
-        type="text"
-        placeholder="Search by invoice number or client name..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="mb-6 w-full rounded-md border px-3 py-2"
-      />
-
-      {loading && <p className="text-gray-500">Loading invoices...</p>}
-
-      {pageError && <p className="text-red-600">{pageError}</p>}
-
-      {!loading && clients.length === 0 && (
-        <p className="text-gray-500">No invoices found.</p>
-      )}
-
-      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredInvoices.map((invoice) => (
-          <InvoiceCard
-            key={invoice.id}
-            invoice={invoice}
-            onEdit={handleEditInvoice}
-            onDelete={handleDeleteInvoice}
-          />
-        ))}
-      </section>
-
-      <ConfirmModal
-        open={invoiceToDelete !== null}
-        title="Delete invoice?"
-        message="This action cannot be undone."
-        onCancel={() => setInvoiceToDelete(null)}
-        onConfirm={confirmDeleteInvoice}
-      />
     </main>
   );
 }
